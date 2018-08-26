@@ -2,10 +2,39 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
 	<context:component-scan base-package="com.springbook.biz" />
+	
+	<!-- <bean id="log" class="com.springbook.biz.common.Log4jAdvice"></bean> -->
+	<!-- <bean id="log" class="com.springbook.biz.common.LogAdvice"></bean> -->
+	<!-- <bean id="before" class="com.springbook.biz.common.BeforeAdvice"></bean> -->
+	<!-- <bean id="afterReturining" class="com.springbook.biz.common.AfterReturning"></bean> -->
+	<bean id="afterThrowing" class="com.springbook.biz.common.AfterThrowingAdvice" />
+	<bean id="after" class="com.springbook.biz.common.AfterAdvice" />
+	<bean id="around" class="com.springbook.biz.common.AroundAdvice" />
+	
+	<aop:config>
+		<aop:pointcut id="allPointcut" expression="execution(* com.springbook.biz..*Impl.*(..))" />
+		<aop:pointcut id="getPointcut" expression="execution(* com.springbook.biz..*Impl.get*(..))" />
+		
+		<aop:aspect ref="around">
+			<!-- <aop:before pointcut-ref="getPointcut" method="printLogging"/> -->
+			<!-- <aop:after pointcut-ref="getPointcut" method="printLog"/> -->
+			<!-- <aop:before pointcut-ref="allPointcut" method="beforeLog"/> -->
+			<!-- <aop:after-returning pointcut-ref="getPointcut" method="afterLog"/> -->
+			<!-- <aop:after-throwing pointcut-ref="allPointcut" method="exceptionLog"/> -->
+			<!-- <aop:after pointcut-ref="allPointcut" method="finallyLog"/> -->
+			<aop:around pointcut-ref="allPointcut" method="aroundLog"/>
+		</aop:aspect>
+		
+		<aop:aspect ref="afterThrowing">
+			<aop:after-throwing pointcut-ref="allPointcut" method="exceptionLog"/>
+		</aop:aspect>
+	</aop:config>
 	
 	<!-- 어노테이션 적용으로 주석처리 -->
 	<!-- 
